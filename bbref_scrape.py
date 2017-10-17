@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[64]:
+# In[1]:
 
 import lxml.html as LH
 import requests
@@ -9,26 +9,19 @@ from bs4 import BeautifulSoup as bs
 import pandas as pd
 import string
 import re
-import os
 import warnings
 import urllib.request
-import datetime
 from itertools import compress
 warnings.filterwarnings('ignore')
 
 
-# In[28]:
-
-datetime.datetime.now()
-
-
-# In[49]:
+# In[2]:
 
 class HTMLTableParser:
        def parse_url(self, url):
            response = requests.get(url)
            soup = bs(response.text, 'lxml')
-           return [(table['id'],self.parse_html_table(table))                   for table in soup.find_all('table')]  
+           return [(table['id'],self.parse_html_table(table)) for table in soup.find_all('table')]  
    
        def parse_html_table(self, table):
            n_columns = 0
@@ -80,7 +73,7 @@ class HTMLTableParser:
            return df
 
 
-# In[184]:
+# In[20]:
 
 class bbref_scrape:
     def get_player_ids(url):
@@ -93,14 +86,14 @@ class bbref_scrape:
                 ids.append(x["data-append-csv"])
             except:
                 next
-        return(ids)
+        return(list(set(ids)))
 
     def get_player_links(url):
         r = requests.get(url)
         all_tags = bs(r.content, "html.parser")
         ids_bool = [bool(re.search(pattern="players/\w/.+", string = x["href"])) for x in all_tags.find_all("a")]
         ids = list(compress([x["href"] for x in all_tags.find_all("a")], ids_bool))
-        return([re.sub(pattern="[.](html)",string=x, repl="") for x in ids])
+        return(list(set([re.sub(pattern="[.](html)",string=x, repl="") for x in ids])))
     
     def get_player_gamelogs(sport_type, link, year):
         def text(elt):
@@ -130,7 +123,7 @@ class bbref_scrape:
             return(df)
 
 
-# In[8]:
+# In[4]:
 
 hp = HTMLTableParser()
 #NBA
@@ -158,16 +151,20 @@ game_logs_df["dk"] = (1*game_logs_df["FG"]) + ((1/2)*game_logs_df["3P"]) + ((5/4
 double_double = pd.Series(game_logs_df[["FG", "TRB", "AST", "STL", "BLK", "TOV"]].apply(lambda x: sum(x>=10), axis = 1) > 1)
 game_logs_df["dk"][double_double] += 1.5
 #Write the csv
-game_logs_df.to_csv("C:\\Users\\neste\\Google Drive\\NBA-NHL\\game_logs\\nba_game_logs_%s.csv" % str(year), columns=game_log_cols)
+game_logs_df.to_csv("nba_game_logs_%s.csv" % str(year), columns=game_log_cols)
 
 
-# In[ ]:
+# In[24]:
 
 #NHL Skater Game Logs
 year = 2018
+game_log_cols = ['bbrefID', 'Date', 'G', 'Age', 'Team', 'is_away', 'Opp', 'win_loss', 'goals', 'assists', 'pts',
+       'plus_minus', 'pim', 'g_ev', 'g_pp', 'g_sh', 'g_gw', 'a_ev', 'a_pp', 'a_sh', 'shots', 'shooting_pct', 'shifts', 'toi',
+       'hits', 'blocks', 'fow', 'fol', 'fo_pct']
 ids = bbref_scrape.get_player_links(skater_basic)
 game_logs = [bbref_scrape.get_player_gamelogs(sport_type = "hockey", link = x, year = year) for x in ids]
 game_logs_new = list(compress(game_logs, [x is not None for x in game_logs]))
 game_logs_df = pd.concat(list(compress(game_logs_new, ["Goalie Stats" not in x.columns for x in game_logs_new])))
-game_logs_df.to_csv("C:\\Users\\neste\\Google Drive\\NBA-NHL\\game_logs\\nhl_game_logs_%s.csv" % str(year))
+game_logs_df.columns = game_log_cols
+game_logs_df.to_csv("nhl_game_logs_%s.csv" % str(year))
 
