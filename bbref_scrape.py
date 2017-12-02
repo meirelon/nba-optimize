@@ -139,7 +139,7 @@ skater_advanced = "https://www.hockey-reference.com/leagues/NHL_2018_skaters-adv
 # In[219]:
 
 #NBA Game Logs
-year = 2017
+year = 2018
 game_log_cols = ['bbrefID', 'G', 'Date', 'Age', 'Tm', 'is_away', 'Opp', 'game_outcome', 'GS', 'MP', 'FG',
        'FGA', 'FG_pct', '3P', '3PA', '3P_pct', 'FT', 'FTA', 'FT_pct', 'ORB', 'DRB',
        'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'GmSc', 'plus_minus', 'dk']
