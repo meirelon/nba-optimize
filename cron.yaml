@@ -1,4 +1,4 @@
 cron:
 - description: "daily bbref scrape"
-  url: main --year=2019 --project=scarlet-labs
+  url: /main.py
   schedule: every 24 hours

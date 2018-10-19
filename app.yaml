@@ -1,1 +1,5 @@
 runtime: python36
+
+handlers:
+- url: /.*
+  script: main.py --year=2019 --project=scarlet-labs
