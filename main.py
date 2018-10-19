@@ -1,3 +1,4 @@
+import argparse
 import string
 import re
 import warnings
@@ -81,9 +82,27 @@ class bbref_scrape:
         player_gamelog_list = [self.get_player_gamelogs(link = x) for x in player_ids[0:5]]
         return pd.concat([x for x in player_gamelog_list if x is not None], axis=0, ignore_index=True)
 
-def main():
-    player_pg = "https://www.basketball-reference.com/leagues/NBA_YYYY_per_game.html"
-    scraper = bbref_scrape(sport_type="basketball", year=2017, url=player_pg)
+def main(argv=None):
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--sport_type',
+                        dest='sport_type',
+                        default = 'basketball',
+                        help='This is the sport type (either basketball or hockey)')
+    parser.add_argument('--year',
+                        dest='year',
+                        help='Specify the season you want to pull')
+    parser.add_argument('--url',
+                        dest='url',
+                        default = 'https://www.basketball-reference.com/leagues/NBA_YYYY_per_game.html',
+                        help='The url we will pull data from')
+
+    args, _ = parser.parse_known_args(argv)
+
+
+    scraper = bbref_scrape(sport_type=args.sport_type,
+                           year=args.year,
+                           url=args.url)
     bbref_df = scraper.run()
     # bbref_df.to_gbq(project_id="scarlet-labs", destination_table="basketball.gamelogs_2017")
 
