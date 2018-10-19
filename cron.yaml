@@ -1,0 +1,4 @@
+cron:
+- description: "daily bbref scrape"
+  url: main --year=2019 --project=scarlet-labs
+  schedule: every 24 hours
