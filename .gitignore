@@ -1,0 +1,6 @@
+.drake
+*.pyc
+*.csv
+*.json
+.bash_history
+.ipynb_checkpoints

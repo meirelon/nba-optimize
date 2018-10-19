@@ -1,5 +1,6 @@
 pyasn1 == 0.4.1
 google-api-python-client
+pandas-gbq
 requests
 bs4
 lxml
