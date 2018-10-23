@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup as bs
 
 import pandas as pd
 
-from utils import get_request
+from scrape_foos.utils import get_request
 
 
 class bbref_scrape:
