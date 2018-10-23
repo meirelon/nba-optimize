@@ -12,7 +12,7 @@ def start_get_data(): #make up memorable function name for cron job
         return 'Bad Request', 400
 
     try:
-        year = 2019
+        year = '2019'
         project = 'scarlet-labs'
         sport_type='basketball'
         url = 'https://www.basketball-reference.com/leagues/NBA_YYYY_per_game.html'.replace('YYYYMMDD', year)
