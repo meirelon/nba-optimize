@@ -18,10 +18,11 @@ from utils import get_request
 
 
 class bbref_scrape:
-    def __init__(self, year, sport_type, url):
+    def __init__(self, year, sport_type, url, project):
         self.year = year
         self.sport_type = sport_type
         self.url = url
+        self.project = project
 
     def get_player_ids(self):
         r = get_request(self.url)
@@ -84,7 +85,7 @@ class bbref_scrape:
         player_gamelog_list = [self.get_player_gamelogs(link = x) for x in player_ids]
         bbref_df = pd.concat([x for x in player_gamelog_list if x is not None], axis=0, ignore_index=True)
         gcs_path = "{sport_type}.gamelogs{season}_{partition_date}".format(sport_type=self.sport_type, season=self.year, partition_date=datetime.today().strftime("%Y%m%d"))
-        bbref_df.to_gbq(project_id=project, destination_table=gcs_path)
+        bbref_df.to_gbq(project_id=self.project, destination_table=gcs_path)
         # return pd.concat([x for x in player_gamelog_list if x is not None], axis=0, ignore_index=True)
 
 def main(argv=None):

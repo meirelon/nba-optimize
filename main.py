@@ -13,10 +13,10 @@ def start_get_data(): #make up memorable function name for cron job
 
     try:
         year = '2019'
-        sport_type = 'basketball'
         sport_type='basketball'
+        project = 'scarlet-labs'
         url = 'https://www.basketball-reference.com/leagues/NBA_YYYY_per_game.html'.replace('YYYYMMDD', year)
-        scraper = scrape.bbref_scrape(year=year, sport_type=sport_type, url=url)
+        scraper = scrape.bbref_scrape(year=year, sport_type=sport_type, url=url, project=project)
         scraper.run() #the actual name of the script/function you want to run contained in the subfolder
         return "Pipeline started", 200
     except Exception as e:
