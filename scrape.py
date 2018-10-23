@@ -82,7 +82,7 @@ class bbref_scrape:
     def run(self):
         player_ids = self.get_player_links()
         player_gamelog_list = [self.get_player_gamelogs(link = x) for x in player_ids]
-        bbref_df = scraper.run()
+        bbref_df = pd.concat([x for x in player_gamelog_list if x is not None], axis=0, ignore_index=True)
         gcs_path = "{sport_type}.gamelogs{season}_{partition_date}".format(sport_type=self.sport_type, season=self.year, partition_date=datetime.today().strftime("%Y%m%d"))
         bbref_df.to_gbq(project_id=project, destination_table=gcs_path)
         # return pd.concat([x for x in player_gamelog_list if x is not None], axis=0, ignore_index=True)
