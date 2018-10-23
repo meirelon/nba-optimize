@@ -113,7 +113,7 @@ def main(argv=None):
     bbref_df = scraper.run()
     gcs_path = "{sport_type}.gamelogs{season}_{partition_date}".format(sport_type=args.sport_type, season=args.year, partition_date=datetime.today().strftime("%Y%m%d"))
     # bbref_df.to_csv(path.join("game_logs", "{sport_type}_{season}_{partition_date}.csv".format(sport_type=args.sport_type, season=args.year, partition_date=datetime.today().strftime("%Y%m%d"))), index=False)
-    bbref_df.to_gbq(project_id=args.project, destination_table=gcs_path)
+    bbref_df.to_gbq(project_id=args.project, destination_table=gcs_path, if_exists="replace")
 
 
 if __name__ == '__main__':
