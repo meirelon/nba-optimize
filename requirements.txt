@@ -1,9 +1,12 @@
 pyasn1 == 0.4.1
 google-api-python-client
-pandas-gbq
+pandas-gbq==0.4.0
 requests
 bs4
 lxml
 pandas
-luigi >= 2.4.0
-setuptools >= 28.0.0
+gunicorn==19.7.1
+six==1.10
+Flask==0.12.2
+sodapy==1.4.6
+datalab==1.1.2
