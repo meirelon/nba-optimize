@@ -85,39 +85,7 @@ class bbref_scrape:
         player_gamelog_list = [self.get_player_gamelogs(link = x) for x in player_ids]
         bbref_df = pd.concat([x for x in player_gamelog_list if x is not None], axis=0, ignore_index=True)
         gcs_path = "{sport_type}.gamelogs{season}_{partition_date}".format(sport_type=self.sport_type, season=self.year, partition_date=datetime.today().strftime("%Y%m%d"))
-        bbref_df.to_gbq(project_id=self.project, destination_table=gcs_path)
-        # return pd.concat([x for x in player_gamelog_list if x is not None], axis=0, ignore_index=True)
-
-def main(argv=None):
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--project',
-                        dest='project',
-                        default = None,
-                        help='This is the GCP project you wish to send the data')
-    parser.add_argument('--sport_type',
-                        dest='sport_type',
-                        default = 'basketball',
-                        help='This is the sport type (either basketball or hockey)')
-    parser.add_argument('--year',
-                        dest='year',
-                        default='2017',
-                        help='Specify the season you want to pull')
-    parser.add_argument('--url',
-                        dest='url',
-                        default = 'https://www.basketball-reference.com/leagues/NBA_YYYY_per_game.html',
-                        help='The url we will pull data from')
-
-    args, _ = parser.parse_known_args(argv)
-
-
-    scraper = bbref_scrape(sport_type=args.sport_type,
-                           year=args.year,
-                           url=args.url.replace("YYYY", args.year))
-    bbref_df = scraper.run()
-    gcs_path = "{sport_type}.gamelogs{season}_{partition_date}".format(sport_type=args.sport_type, season=args.year, partition_date=datetime.today().strftime("%Y%m%d"))
-    # bbref_df.to_csv(path.join("game_logs", "{sport_type}_{season}_{partition_date}.csv".format(sport_type=args.sport_type, season=args.year, partition_date=datetime.today().strftime("%Y%m%d"))), index=False)
-    bbref_df.to_gbq(project_id=project, destination_table=gcs_path)
+        bbref_df.to_gbq(project_id=self.project, destination_table=gcs_path, if_exists="replace")
 
 
 if __name__ == '__main__':
