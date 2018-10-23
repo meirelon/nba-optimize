@@ -5,7 +5,7 @@ from scrape_foos import scrape
 
 app = Flask(__name__)
 
-@app.route('/bbref-scrape/get-data') #make up memorable URL-will be used in cron job syntax
+@app.route('/bbref-scrape/get-nba-data') #make up memorable URL-will be used in cron job syntax
 def start_get_data(): #make up memorable function name for cron job
     is_cron = request.headers.get('X-Appengine-Cron', False)
     if not is_cron:

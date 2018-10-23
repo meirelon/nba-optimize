@@ -1,4 +1,4 @@
 cron:
 - description: "daily bbref scrape"
-  url: /bbref-scrape/get-data
+  url: /bbref-scrape/get-nba-data
   schedule: every 24 hours
