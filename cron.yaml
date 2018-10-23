@@ -1,4 +1,4 @@
 cron:
 - description: "daily bbref scrape"
-  url: /main.py
+  url: /bbref-scrape/get-data
   schedule: every 24 hours

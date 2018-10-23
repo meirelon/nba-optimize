@@ -1,5 +1,7 @@
 runtime: python37
+env: flex
 
-handlers:
-- url: /.*
-  script: main.py --year=2019 --project=scarlet-labs
+entrypoint: gunicorn -b :$PORT main:app
+
+runtime_config:
+  python_version: 3
