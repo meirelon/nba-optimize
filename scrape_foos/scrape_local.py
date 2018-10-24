@@ -50,7 +50,7 @@ class bbref_scrape:
                 next
         player_id_df = pd.DataFrame({"player":player_name[::2], "bbrefID":ids}).set_index("player")
 
-        df_combined = df.join(player_id_df, how="inner").reset_index()
+        df_combined = df.join(player_id_df, how="inner").reset_index().drop_duplicates()
         gcs_path = "{sport_type}.playerinfo{season}_{partition_date}".format(sport_type=self.sport_type,
                                                                              season=self.year,
                                                                              partition_date=datetime.today().strftime("%Y%m%d"))
