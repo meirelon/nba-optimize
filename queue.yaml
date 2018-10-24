@@ -1,0 +1,4 @@
+total_storage_limit: 120M
+queue:
+- name: queue-blue
+  rate: 1/s
