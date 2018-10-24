@@ -24,38 +24,38 @@ class bbref_scrape:
         self.url = url
 
     def get_player_info(self):
-    r = get_request(self.url)
-    all_tags = bs(r.content, "html.parser")
+        r = get_request(self.url)
+        all_tags = bs(r.content, "html.parser")
 
-    tbl = all_tags.find("table", attrs={"class" : "sortable stats_table"})
-    tbl_rows = tbl.find_all('tr')
-    df_columns = ["player", "pos", "age", "tm", "g", "gs", "mp"]
-    line = []
-    for tr in tbl_rows:
-        td = tr.find_all('td')
-        row = [tr.text for tr in td]
-        line.append(row)
-    df = pd.DataFrame(line).iloc[1:,0:7]
-    df.columns = df_columns
-    df = df.set_index("player")
+        tbl = all_tags.find("table", attrs={"class" : "sortable stats_table"})
+        tbl_rows = tbl.find_all('tr')
+        df_columns = ["player", "pos", "age", "tm", "g", "gs", "mp"]
+        line = []
+        for tr in tbl_rows:
+            td = tr.find_all('td')
+            row = [tr.text for tr in td]
+            line.append(row)
+        df = pd.DataFrame(line).iloc[1:,0:7]
+        df.columns = df_columns
+        df = df.set_index("player")
 
-    ids_raw = [x for x in all_tags.find_all("td", class_ = "left")]
-    ids = []
-    player_name = []
-    for x in ids_raw:
-        try:
-            player_name.append(x.get_text().strip())
-            ids.append(x["data-append-csv"])
-        except:
-            next
-    player_id_df = pd.DataFrame({"player":player_name[::2], "bbrefID":ids}).set_index("player")
+        ids_raw = [x for x in all_tags.find_all("td", class_ = "left")]
+        ids = []
+        player_name = []
+        for x in ids_raw:
+            try:
+                player_name.append(x.get_text().strip())
+                ids.append(x["data-append-csv"])
+            except:
+                next
+        player_id_df = pd.DataFrame({"player":player_name[::2], "bbrefID":ids}).set_index("player")
 
-    df_combined = df.join(player_id_df, how="inner").reset_index()
-    gcs_path = "{sport_type}.playerinfo{season}_{partition_date}".format(sport_type=self.sport_type,
-                                                                         season=self.year,
-                                                                         partition_date=datetime.today().strftime("%Y%m%d"))
+        df_combined = df.join(player_id_df, how="inner").reset_index()
+        gcs_path = "{sport_type}.playerinfo{season}_{partition_date}".format(sport_type=self.sport_type,
+                                                                             season=self.year,
+                                                                             partition_date=datetime.today().strftime("%Y%m%d"))
 
-    df_combined.to_gbq(project_id='scarlet-labs', destination_table=gcs_path, if_exists="replace")
+        df_combined.to_gbq(project_id='scarlet-labs', destination_table=gcs_path, if_exists="replace")
 
     def get_player_links(self):
         r = get_request(self.url)
