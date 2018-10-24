@@ -51,6 +51,7 @@ class bbref_scrape:
         player_id_df = pd.DataFrame({"player":player_name[::2], "bbrefID":ids}).set_index("player")
 
         df_combined = df.join(player_id_df, how="inner").reset_index().drop_duplicates()
+        df_combined['secs_played'] = df_combined['mp'].apply(lambda x: (int(x.split(".")[0])*60) + int((x.split(".")[1])))
         gcs_path = "{sport_type}.playerinfo{season}_{partition_date}".format(sport_type=self.sport_type,
                                                                              season=self.year,
                                                                              partition_date=datetime.today().strftime("%Y%m%d"))
@@ -95,6 +96,7 @@ class bbref_scrape:
 
             if df is not None and self.sport_type == "basketball" and df.shape[1] == n:
                 df.columns = game_log_cols
+                df['secs_played'] = df['MP'].apply(lambda x: (int(x.split(":")[0])*60) + int((x.split(":")[1])))
                 df[["FG", "ThreeP", "TRB", "AST", "STL", "BLK", "TOV"]] = df[["FG", "ThreeP", "TRB", "AST", "STL", "BLK", "TOV"]].astype(float)
                 df["dk"] = (1*df["FG"]) + ((1/2)*df["ThreeP"]) + ((5/4)*df["TRB"]) + ((3/2)*df["AST"]) + (2*df["STL"]) + (2*df["BLK"]) + ((1/2)*df["TOV"])
                 double_double = pd.Series(df[["FG", "TRB", "AST", "STL", "BLK", "TOV"]].apply(lambda x: sum(x>=10), axis = 1) > 1)
