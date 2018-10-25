@@ -69,17 +69,12 @@ class bbref_scrape:
         def text(elt):
             return elt.text_content().replace(u'\xa0', u' ')
 
-        if(self.sport_type == "basketball"):
-            ref_link = "basketball-reference.com/"
-            n = 30
-            tbl_xpath = '//*[@id="pgl_basic"]'
-            game_log_cols = ['bbrefID', 'G', 'date', 'age', 'tm', 'is_away', 'opp', 'game_outcome', 'GS', 'MP', 'FG',
-                               'FGA', 'FG_pct', 'ThreeP', 'ThreePA', 'ThreeP_pct', 'FT', 'FTA', 'FT_pct', 'ORB', 'DRB',
-                                   'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'GmSc', 'plus_minus']
-        else:
-            ref_link = "hockey-reference.com/"
-            n = 29
-            tbl_xpath = '//*[@id="gamelog"]'
+        ref_link = "basketball-reference.com/"
+        n = 30
+        tbl_xpath = '//*[@id="pgl_basic"]'
+        game_log_cols = ['bbrefID', 'G', 'date', 'age', 'tm', 'is_away', 'opp', 'game_outcome', 'GS', 'MP', 'FG',
+                           'FGA', 'FG_pct', 'ThreeP', 'ThreePA', 'ThreeP_pct', 'FT', 'FTA', 'FT_pct', 'ORB', 'DRB',
+                               'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'GmSc', 'plus_minus']
 
         bbrefID = re.findall(string=link, pattern="(?<=[/])\w+|\d+")[2]
         url = "https://www."+ ref_link + link + "/gamelog/" + str(self.year)
@@ -94,7 +89,7 @@ class bbref_scrape:
             data = pd.DataFrame(data, columns = header)
             df = pd.concat([pd.DataFrame({"bbrefID":[bbrefID for bbref in range(len(data))]}), data], axis=1)
 
-            if df is not None and self.sport_type == "basketball" and df.shape[1] == n:
+            if df is not None and df.shape[1] == n:
                 df.columns = game_log_cols
                 df['secs_played'] = df['MP'].apply(lambda x: (int(x.split(":")[0])*60) + int((x.split(":")[1])))
                 df[["FG", "ThreeP", "TRB", "AST", "STL", "BLK", "TOV"]] = df[["FG", "ThreeP", "TRB", "AST", "STL", "BLK", "TOV"]].astype(float)
