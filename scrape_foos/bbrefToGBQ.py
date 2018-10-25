@@ -27,7 +27,8 @@ class bbrefToGBQ:
                                                                            partition_date=datetime.today().strftime("%Y%m%d"))
         standard_game_logs_df.to_gbq(project_id=self.project_id,
                                      destination_table=standard_gcs_path,
-                                     if_exists="replace")
+                                     if_exists="replace",
+                                     chunksize=10000)
 
         advanced_game_logs = [get_player_game_logs(bbrefID=id, year=self.year, game_log_type="advanced")
                               for id in np.unique(player_info['bbrefID'])]
@@ -37,7 +38,8 @@ class bbrefToGBQ:
                                                                            partition_date=datetime.today().strftime("%Y%m%d"))
         advanced_game_logs_df.to_gbq(project_id=self.project_id,
                                      destination_table=advanced_gcs_path,
-                                     if_exists="replace")
+                                     if_exists="replace",
+                                     chunksize=10000)
 
 def main(argv=None):
     parser = argparse.ArgumentParser()

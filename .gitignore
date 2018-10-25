@@ -4,3 +4,4 @@
 *.json
 .bash_history
 .ipynb_checkpoints
+bigquery_credentials.dat
