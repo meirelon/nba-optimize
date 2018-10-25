@@ -5,12 +5,13 @@ import re
 import warnings
 warnings.filterwarnings('ignore')
 import urllib.request
-from itertools import compress
+# from itertools import compress
 
 import lxml.html as LH
 import requests
 from bs4 import BeautifulSoup as bs
 
+import numpy as np
 import pandas as pd
 
 from utils import get_request
@@ -19,7 +20,7 @@ from utils import get_request
 
 def get_player_info(year):
     url = 'https://www.basketball-reference.com/leagues/NBA_{year}_per_game.html'.format(year=year)
-    r = get_request(self.url)
+    r = get_request(url)
     all_tags = bs(r.content, "html.parser")
 
     tbl = all_tags.find("table", attrs={"class" : "sortable stats_table"})
@@ -45,6 +46,8 @@ def get_player_info(year):
           next
     player_id_df = pd.DataFrame({"player":player_name[::2], "bbrefID":ids}).set_index("player")
     df_combined = df.join(player_id_df, how="inner").reset_index().drop_duplicates()
+    df_combined['mp'] = df_combined['mp'].astype(float)
+    # df_combined['secs_played'] = df_combined['mp'].apply(lambda x: (int(x.split(".")[0])*60) + int((x.split(".")[1])))
 
     return df_combined
 
@@ -93,4 +96,5 @@ def get_player_game_logs(bbrefID, game_log_type, year):
     elif game_log_type =="advanced":
         df['venue'] = np.where(df['venue'] == '@', 'away', 'home')
 
+    df['bbrefID'] = [bbrefID for bbref in range(len(df))]
     return df
