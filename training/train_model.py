@@ -17,11 +17,10 @@ from math import sqrt
 from training_utils import model_bakeoff, deploy_pickle
 
 class TrainModel:
-    def __init__(self, project, bucket, destination_path, filename):
+    def __init__(self, project, bucket, destination_path):
         self.project = project
         self.bucket = bucket
         self.destination_path = destination_path
-        self.filename = filename
 
 
     def train(self):
