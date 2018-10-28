@@ -59,12 +59,19 @@ class TrainModel:
         return ridge_model
 
     def run(self):
-        model = self.train()
-        deploy_pickle(obj=model['model'],
+        train_obj = self.train()
+
+        deploy_pickle(obj=train_obj['model'],
                       project_id=self.project,
                       bucket=self.bucket,
                       destination_path=self.destination_path,
-                      filename=self.filename)
+                      filename='model')
+
+        deploy_pickle(obj=train_obj['preprocessing'],
+                      project_id=self.project,
+                      bucket=self.bucket,
+                      destination_path=self.destination_path,
+                      filename='preprocessing')
 
 def main(argv=None):
     parser = argparse.ArgumentParser()
@@ -81,17 +88,12 @@ def main(argv=None):
                         dest='destination_path',
                         default = 'nba_models',
                         help='This is the sport type (for now)')
-    parser.add_argument('--filename',
-                        dest='filename',
-                        default = 'model',
-                        help='Model Name')
 
     args, _ = parser.parse_known_args(argv)
 
     train_pipeline = TrainModel(project=args.project,
                                 bucket=args.bucket,
-                                destination_path=args.destination_path,
-                                filename=args.filename)
+                                destination_path=args.destination_path)
 
     train_pipeline.run()
 
