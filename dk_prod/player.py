@@ -3,7 +3,6 @@ import pandas as pd
 
 
 class Player:
-
     def __init__(self, projection, variable):
         self.pulp_var = variable
         self.name = projection.Name
@@ -11,7 +10,6 @@ class Player:
         self.salary = projection.Salary
         self.projected = projection.Projected
         self.position = {}
-        self.pos="red" #For output only
         self.count=0
         positions=['PG', 'SG', 'SF', 'PF', 'C']
         for position in positions:
