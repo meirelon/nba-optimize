@@ -116,15 +116,22 @@ def categorical_binarizer(categorical_features):
         return(pipelines)
 
 
-def deploy_pickle(obj, project_id, bucket, destination_path, filename):
-    client = storage.Client(project=project_id)
+def deploy_pickle(obj, project_id, bucket, destination_path, filename, local=False):
+    if local:
+        client = storage.Client.from_service_account_json(project=project_id,
+                                                          json_credentials_path='../scarlet-labs-2e06fe082fb4.json')
+    else:
+        client = storage.Client(project=project_id)
+
     with NamedTemporaryFile(mode='wb') as temp:
         pickle.dump(obj, temp)
         temp.seek(0)
         gcs_path = os.path.join(destination_path, datetime.today().strftime("%Y%m%d"), '{filename}.pkl'.format(filename=filename))
         client.bucket(bucket).blob(gcs_path).upload_from_filename(temp.name)
 
+
 def check_buckets():
-    storage_client = storage.Client('scarlet_labs')
+    storage_client = storage.Client.from_service_account_json(project='scarlet-labs',
+                                                              json_credentials_path='../scarlet-labs-2e06fe082fb4.json')
     buckets = list(storage_client.list_buckets())
     print(buckets)
