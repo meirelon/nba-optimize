@@ -8,18 +8,37 @@ import csv
 import random
 from player import *
 
+from prod_utils import load_pipeline
+
 class DraftKingsNBAOptimizeLineups:
 	def __init__(self, project, dataset, dk_link, total_lineups):
 		self.project = project
 		self.dataset = dataset
 		self.dk_link = dk_link
 		self.total_lineups = total_lineups
+		self._projection_df = None
+
+	@property
+	def get_projections(self):
+		if not self._projection_df:
+			query = pd.read_pickle("../query.pkl")
+			model = pd.read_pickle("model.pkl")
+			prepared_query = query.format(season=2019, dt='2018-10-27', partition_date='20181028')
+			df = pd.read_gbq(prepared_query, project_id='scarlet-labs', dialect="standard", verbose=False).fillna(value=0)
+			df = df.set_index("player")
+			prediction_input = df.select_dtypes([np.number]).drop(['dk', 'secs_played'], axis=1).dropna()
+			df["Projected"] = model.predict(prediction_input)
+			self._projection_df = df
+			return self._projection_df
 
 	def optimize(self):
+		projection_df = self.get_projections
 		iterations=50
-		data_col_names = ["Id", "Name", "Position", "Team", "Salary", "Projected"]
-		data = pd.read_csv(self.dk_link)[["ID", "Name", "Position", "TeamAbbrev", "Salary", "AvgPointsPerGame"]]
-		data.columns = data_col_names
+		data_col_names = ["Id", "Name", "Position", "Team", "Salary", "AvgPointsPerGame"]
+		dk_data = pd.read_csv(self.dk_link)[["ID", "Name", "Position", "TeamAbbrev", "Salary", "AvgPointsPerGame"]]
+		dk_data.columns = data_col_names
+		dk_data = dk_data.set_index("Name")
+		data = dk_data.join(projection_df["Projected"], how="left").reset_index().drop(["AvgPointsPerGame"], axis=1).fillna(value=0)
 		prob = pulp.LpProblem('NBA', pulp.LpMaximize)
 		players={}
 		total_budget=50000

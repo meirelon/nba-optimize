@@ -1,8 +1,8 @@
 pyasn1 == 0.4.1
+pandas-gbq==0.4.0
 google-api-python-client
 scipy
 gcloud
-pandas-gbq==0.4.0
 requests
 bs4
 lxml
