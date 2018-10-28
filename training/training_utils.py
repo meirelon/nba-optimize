@@ -1,3 +1,4 @@
+import os
 from math import sqrt
 from dateutil import rrule, parser
 from itertools import compress
@@ -13,7 +14,13 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import mean_squared_error
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+
+#deploying pickle files to gcs
+import pickle
+from datetime import datetime
+from gcloud import storage
+from tempfile import NamedTemporaryFile
 
 def generate_date_list(date1, date2):
     return [x.strftime("%Y-%m-%d") for x in list(rrule.rrule(rrule.DAILY,
@@ -51,8 +58,8 @@ def model_bakeoff(model, df, dependent_var, test_size, random_state=42):
     training_accuracy = sqrt(mean_squared_error(y_pred=model.predict(X_train), y_true=y_train))
     is_overfit = abs(testing_accuracy - training_accuracy) > 1
 
-    plt.scatter(y_hat, y_test)
-    plt.show()
+    # plt.scatter(y_hat, y_test)
+    # plt.show()
 
     return({"model":model, "accuracy":testing_accuracy, "overfit":is_overfit})
 
@@ -101,3 +108,12 @@ def categorical_binarizer(categorical_features):
             pipelines.append((f, Pipeline([("selector", DataFrameSelector(f)),
                                           ("Binarizer", LabelBinarizer())])))
         return(pipelines)
+
+
+def deploy_pickle(obj, project_id, bucket, destination_path, filename):
+    client = storage.Client(project=project_id)
+    with NamedTemporaryFile(mode='wb') as temp:
+        pickle.dump(obj, temp)
+        temp.seek(0)
+        gcs_path = os.path.join(destination_path, datetime.today().strftime("%Y%m%d"), '{filename}.pkl'.format(filename=filename))
+        client.bucket(bucket).blob(gcs_path).upload_from_filename(temp.name)
