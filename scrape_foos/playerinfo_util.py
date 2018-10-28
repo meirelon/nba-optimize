@@ -71,30 +71,32 @@ def get_player_game_logs(bbrefID, game_log_type, year):
     #make request for table
     r = get_request(url)
     all_tags = bs(r.content, "html.parser")
+    try:
+        tbl = all_tags.find("table", attrs={"class" : "row_summable sortable stats_table"})
+        tbl_rows = tbl.find_all('tr')
+        line = []
+        for tr in tbl_rows:
+            td = tr.find_all('td')
+            row = [tr.text for tr in td]
+            line.append(row)
 
-    tbl = all_tags.find("table", attrs={"class" : "row_summable sortable stats_table"})
-    tbl_rows = tbl.find_all('tr')
-    line = []
-    for tr in tbl_rows:
-        td = tr.find_all('td')
-        row = [tr.text for tr in td]
-        line.append(row)
+        #clean the table
+        df = pd.DataFrame(line).iloc[1:,:]
+        df.columns = game_log_cols
+        df = df[df['G'] != ''].dropna(axis=0).reset_index().iloc[:,1:]
 
-    #clean the table
-    df = pd.DataFrame(line).iloc[1:,:]
-    df.columns = game_log_cols
-    df = df[df['G'] != ''].dropna(axis=0).reset_index().iloc[:,1:]
+        if game_log_type == "standard":
+            df['secs_played'] = df['MP'].apply(lambda x: (int(x.split(":")[0])*60) + int((x.split(":")[1])))
+            df['venue'] = np.where(df['venue'] == '@', 'away', 'home')
+            df[["FG", "ThreeP", "TRB", "AST", "STL", "BLK", "TOV"]] = df[["FG", "ThreeP", "TRB", "AST", "STL", "BLK", "TOV"]].astype(float)
+            df["dk"] = (1*df["FG"]) + ((1/2)*df["ThreeP"]) + ((5/4)*df["TRB"]) + ((3/2)*df["AST"]) + (2*df["STL"]) + (2*df["BLK"]) + ((1/2)*df["TOV"])
+            double_double = pd.Series(df[["FG", "TRB", "AST", "STL", "BLK", "TOV"]].apply(lambda x: sum(x>=10), axis = 1) > 1)
+            df["dk"][double_double] += 1.5
 
-    if game_log_type == "standard":
-        df['secs_played'] = df['MP'].apply(lambda x: (int(x.split(":")[0])*60) + int((x.split(":")[1])))
-        df['venue'] = np.where(df['venue'] == '@', 'away', 'home')
-        df[["FG", "ThreeP", "TRB", "AST", "STL", "BLK", "TOV"]] = df[["FG", "ThreeP", "TRB", "AST", "STL", "BLK", "TOV"]].astype(float)
-        df["dk"] = (1*df["FG"]) + ((1/2)*df["ThreeP"]) + ((5/4)*df["TRB"]) + ((3/2)*df["AST"]) + (2*df["STL"]) + (2*df["BLK"]) + ((1/2)*df["TOV"])
-        double_double = pd.Series(df[["FG", "TRB", "AST", "STL", "BLK", "TOV"]].apply(lambda x: sum(x>=10), axis = 1) > 1)
-        df["dk"][double_double] += 1.5
+        elif game_log_type =="advanced":
+            df['venue'] = np.where(df['venue'] == '@', 'away', 'home')
 
-    elif game_log_type =="advanced":
-        df['venue'] = np.where(df['venue'] == '@', 'away', 'home')
-
-    df['bbrefID'] = [bbrefID for bbref in range(len(df))]
-    return df
+        df['bbrefID'] = [bbrefID for bbref in range(len(df))]
+        return df
+    except:
+        return None
