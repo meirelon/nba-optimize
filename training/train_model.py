@@ -56,11 +56,11 @@ class TrainModel:
                   dependent_var="dk",
                   test_size=0.3)
 
-        return ridge['model']
+        return ridge_model
 
     def run(self):
         model = self.train()
-        deploy_pickle(obj=model,
+        deploy_pickle(obj=model['model'],
                       project_id=self.project,
                       bucket=self.bucket,
                       destination_path=self.destination_path,

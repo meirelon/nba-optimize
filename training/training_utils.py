@@ -48,7 +48,10 @@ def model_bakeoff(model, df, dependent_var, test_size, random_state=42):
         ]))
     ])
 
-    X_transformed = complete_pipeline.fit_transform(X)
+    try:
+        X_transformed = complete_pipeline.fit_transform(X)
+    except:
+        X_transformed = X.select_dtypes([np.number])
 
     X_train, X_test, y_train, y_test = train_test_split(X_transformed, y, test_size=test_size, random_state=random_state)
 
@@ -61,7 +64,10 @@ def model_bakeoff(model, df, dependent_var, test_size, random_state=42):
     # plt.scatter(y_hat, y_test)
     # plt.show()
 
-    return({"model":model, "accuracy":testing_accuracy, "overfit":is_overfit})
+    return {"model":model,
+            "preprocessing":complete_pipeline,
+            "accuracy":testing_accuracy,
+            "overfit":is_overfit}
 
 
 
@@ -117,3 +123,8 @@ def deploy_pickle(obj, project_id, bucket, destination_path, filename):
         temp.seek(0)
         gcs_path = os.path.join(destination_path, datetime.today().strftime("%Y%m%d"), '{filename}.pkl'.format(filename=filename))
         client.bucket(bucket).blob(gcs_path).upload_from_filename(temp.name)
+
+def check_buckets():
+    storage_client = storage.Client('scarlet_labs')
+    buckets = list(storage_client.list_buckets())
+    print(buckets)
