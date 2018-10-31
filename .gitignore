@@ -6,5 +6,5 @@
 .ipynb_checkpoints
 *.dat
 *.pkl
-*.txt
+*.qry
 *.gdoc
