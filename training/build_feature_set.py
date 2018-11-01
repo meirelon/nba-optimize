@@ -25,7 +25,7 @@ class BuildFeatureSet:
                                   destination_path=self.destination_path,
                                   filename=self.filename)
             prepared_query = query.format(season=self.season, partition_date=self.partition_date)
-            _df = pd.read_gbq(query=prepared_query, project_id=project, dialect="standard")
+            _df = pd.read_gbq(query=prepared_query, project_id=self.project, dialect="standard")
             return _df
 
     def get_feature_df(self):
@@ -51,6 +51,7 @@ class BuildFeatureSet:
                         destination_table='{sport_type}_features_{partition_date}'.format(sport_type='basketball',
                                                                                                 partition_date=self.partition_date),
                                                                                                 if_exists="replace")
+
 
 
 def main(argv=None):
