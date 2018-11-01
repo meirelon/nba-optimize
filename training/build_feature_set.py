@@ -30,8 +30,8 @@ class BuildFeatureSet:
 
     def get_feature_df(self):
         df = self.get_df
-        player_feature_list = [get_rolling_game_avgs(df, index_on=['bbrefID'], games=g) for g in [5,10,20]]
-        opp_feature_list = [get_rolling_game_avgs(df, index_on=['opp', 'pos'], games=g) for g in [5,10,20]]
+        player_feature_list = [get_rolling_game_avgs(df, index_on=['bbrefID'], games=g) for g in [5,10]]
+        opp_feature_list = [get_rolling_game_avgs(df, index_on=['opp', 'pos'], games=g) for g in [5,10]]
 
         player_feature_df = pd.concat(player_feature_list, axis=1)
         opp_feature_df = pd.concat(opp_feature_list, axis=1).reset_index().groupby(['date', 'opp', 'pos']).median()
