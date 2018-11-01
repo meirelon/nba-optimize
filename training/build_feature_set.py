@@ -25,8 +25,8 @@ class BuildFeatureSet:
                                   destination_path=self.destination_path,
                                   filename=self.filename)
             prepared_query = query.format(season=self.season, partition_date=self.partition_date)
-            _df = pd.read_gbq(query=prepared_query, project_id=self.project, dialect="standard")
-            return _df
+            self._df = pd.read_gbq(query=prepared_query, project_id=self.project, dialect="standard")
+            return self._df
 
     def get_feature_df(self):
         df = self.get_df
