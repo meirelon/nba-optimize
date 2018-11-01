@@ -51,7 +51,7 @@ class BuildFeatureSet:
                                                                                                 partition_date=self.partition_date),
                                                                                                 if_exists="replace",
                                                                                                 verbose=False,
-                                                                                                chunksize=5000)
+                                                                                                chunksize=100)
 
 
 
