@@ -49,7 +49,9 @@ class BuildFeatureSet:
         features.to_gbq(project_id=self.project,
                         destination_table="{sport_type}.features_{partition_date}".format(sport_type="basketball",
                                                                                                 partition_date=self.partition_date),
-                                                                                                if_exists="replace")
+                                                                                                if_exists="replace",
+                                                                                                verbose=False,
+                                                                                                chunksize=10000)
 
 
 
