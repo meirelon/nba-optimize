@@ -30,7 +30,6 @@ class BuildFeatureSet:
 
     def get_feature_df(self):
         df = self.get_df
-        print(df.head())
         player_feature_list = [get_rolling_game_avgs(df, index_on=['bbrefID'], games=g) for g in [5,10,20]]
         opp_feature_list = [get_rolling_game_avgs(df, index_on=['opp', 'pos'], games=g) for g in [5,10,20]]
 
@@ -47,7 +46,7 @@ class BuildFeatureSet:
 
     def run(self):
         features = self.get_feature_df()
-        features.to_gbq(project=self.project,
+        features.to_gbq(project_id=self.project,
                         destination_table='{sport_type}_features_{partition_date}'.format(sport_type='basketball',
                                                                                                 partition_date=self.partition_date),
                                                                                                 if_exists="replace")
