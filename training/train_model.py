@@ -1,3 +1,4 @@
+import os
 import argparse
 import pandas as pd
 import numpy as np
@@ -21,11 +22,12 @@ class TrainModel:
         self.project = project
         self.bucket = bucket
         self.destination_path = destination_path
+        self.partition_date = partition_date
 
 
     def train(self):
         project = self.project
-        query = 'select * from `scarlet-labs.basketball.training_2018`'
+        query = 'select * from `scarlet-labs.basketball.features_{partition_date}`'.format(partition_date=self.partition_date)
         df = pd.read_gbq(query=query, project_id=project, dialect="standard", verbose=False)
         training = df.drop(["bbrefID", "player", "date"], axis=1).dropna()
 
@@ -63,13 +65,15 @@ class TrainModel:
         deploy_pickle(obj=train_obj['model'],
                       project_id=self.project,
                       bucket=self.bucket,
-                      destination_path=self.destination_path,
+                      destination_path=os.path.join(self.destination_path,
+                                                    self.partition_date),
                       filename='model')
 
         deploy_pickle(obj=train_obj['preprocessing'],
                       project_id=self.project,
                       bucket=self.bucket,
-                      destination_path=self.destination_path,
+                      destination_path=os.path.join(self.destination_path,
+                                                    self.partition_date),
                       filename='preprocessing')
 
 def main(argv=None):
@@ -87,12 +91,18 @@ def main(argv=None):
                         dest='destination_path',
                         default = 'nba_models',
                         help='This is the sport type (for now)')
+    parser.add_argument('--partition_date',
+                        dest='partition_date',
+                        default = '20181025',
+                        help='partition date of data collection')
 
     args, _ = parser.parse_known_args(argv)
 
     train_pipeline = TrainModel(project=args.project,
                                 bucket=args.bucket,
-                                destination_path=args.destination_path)
+                                destination_path=args.destination_path,
+                                partition_date=args.partition_date
+                                )
 
     train_pipeline.run()
 
