@@ -37,10 +37,11 @@ class BuildFeatureSet:
         opp_feature_df = pd.concat(opp_feature_list, axis=1).reset_index().groupby(['date', 'opp', 'pos']).median()
 
         feature_df = df.set_index(['date', 'bbrefID']).join(player_feature_df).reset_index().set_index(['date', 'opp', 'pos']).join(opp_feature_df).reset_index()
+        feature_df = feature_df.drop(["secs_played", "plus_minus", "TS_pct", "eFG_pct", "ORB_pct", "DRB_pct", "TRB_pct", "AST_pct", "STL_pct", "BLK_pct", "TOV_pct", "USG_pct", "ORtg", "DRtg", "GmSc"])
 
         if self.is_today:
             most_recent_df = df.groupby('bbrefID', as_index=False, group_keys=False).max()[['bbrefID', 'date']].reset_index().drop(['index'], axis=1)
-            return most_recent_df.set_index(['bbrefID', 'date']).join(feature_df.set_index(['bbrefID', 'date']))
+            return most_recent_df.set_index(['bbrefID', 'date']).join(feature_df.set_index(['bbrefID', 'date'])).reset_index()
         else:
             return feature_df
 
@@ -51,7 +52,7 @@ class BuildFeatureSet:
                                                                                                 partition_date=self.partition_date),
                                                                                                 if_exists="replace",
                                                                                                 verbose=False,
-                                                                                                chunksize=100)
+                                                                                                chunksize=10000)
 
 
 
