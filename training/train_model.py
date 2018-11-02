@@ -1,4 +1,3 @@
-import os
 import argparse
 import pandas as pd
 import numpy as np
@@ -65,15 +64,13 @@ class TrainModel:
         deploy_pickle(obj=train_obj['model'],
                       project_id=self.project,
                       bucket=self.bucket,
-                      destination_path=os.path.join(self.destination_path,
-                                                    self.partition_date),
+                      destination_path=self.destination_path,
                       filename='model')
 
         deploy_pickle(obj=train_obj['preprocessing'],
                       project_id=self.project,
                       bucket=self.bucket,
-                      destination_path=os.path.join(self.destination_path,
-                                                    self.partition_date),
+                      destination_path=self.destination_path,
                       filename='preprocessing')
 
 def main(argv=None):
