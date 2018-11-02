@@ -17,7 +17,7 @@ from math import sqrt
 from training_utils import model_bakeoff, deploy_pickle
 
 class TrainModel:
-    def __init__(self, project, bucket, destination_path):
+    def __init__(self, project, bucket, destination_path, partition_date):
         self.project = project
         self.bucket = bucket
         self.destination_path = destination_path
