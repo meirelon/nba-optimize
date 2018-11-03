@@ -27,7 +27,7 @@ class TrainModel:
 
     def train(self):
         project = self.project
-        query = 'select * from `scarlet-labs.basketball.features{season}_{partition_date}`'.format(season= self.season,
+        query = 'select * from `scarlet-labs.basketball.training{season}_{partition_date}`'.format(season= self.season,
                                                                                                    partition_date=self.partition_date)
         df = pd.read_gbq(query=query, project_id=project, dialect="standard", verbose=False)
         training = df.drop(["bbrefID", "player", "date"], axis=1).dropna()
