@@ -8,7 +8,7 @@ class bbrefToGBQ:
     def __init__(self, project_id, dataset_id, year):
         self.project_id = project_id
         self.dataset_id = dataset_id
-        self.year =year
+        self.year = year
 
     def run(self):
         player_info = get_player_info(year=self.year)
@@ -54,7 +54,7 @@ def main(argv=None):
                         help='This is the sport type (for now)')
     parser.add_argument('--year',
                         dest='year',
-                        default='2018',
+                        default='2019',
                         help='Specify the season you want to pull')
 
     args, _ = parser.parse_known_args(argv)

@@ -76,7 +76,7 @@ def main(argv=None):
                         default = 'get_player_data')
     parser.add_argument('--season',
                         dest='season',
-                        default = '2018')
+                        default = '2019')
     parser.add_argument('--partition_date',
                         dest='partition_date',
                         default = '20181025')
