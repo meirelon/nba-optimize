@@ -26,7 +26,7 @@ class DraftKingsNBAOptimizeLineups:
 		if not self._projection_df:
 			build_features = FeatureBuilding.BuildFeatureSet(project=self.project,
 											bucket='draftkings',
-											destination_path='sql_queires/training',
+											destination_path='sql_queries/training',
 											filename='get_player_data',
 											season=self.season,
 											partition_date=self.partition_date,
