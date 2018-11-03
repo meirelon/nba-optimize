@@ -62,8 +62,8 @@ def model_bakeoff(model, df, dependent_var, test_size, random_state=42):
     try:
         X_transformed = complete_pipeline.fit_transform(X)
     except:
-        # X_transformed = X.select_dtypes([np.number])
-        X_transformed = complete_pipeline.fit_transform(X)
+        X_transformed = X.select_dtypes([np.number])
+        print(X_transformed.columns)
 
     X_train, X_test, y_train, y_test = train_test_split(X_transformed, y, test_size=test_size, random_state=random_state)
 
