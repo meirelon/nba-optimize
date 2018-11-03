@@ -10,7 +10,6 @@ from player import *
 
 from prod_utils import load_pipeline
 import FeatureBuilding
-import numpy as np
 
 class DraftKingsNBAOptimizeLineups:
 	def __init__(self, project, dataset, dk_link, total_lineups, season, partition_date):

@@ -6,6 +6,7 @@ from gcloud import storage
 from tempfile import NamedTemporaryFile
 
 import pandas as pd
+import numpy as np
 
 def load_pipeline(project_id, bucket, destination_path, filename, local=False):
     if local:
