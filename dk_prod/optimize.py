@@ -32,11 +32,6 @@ class DraftKingsNBAOptimizeLineups:
 											partition_date=self.partition_date,
 											is_today=True)
 			df = build_features.get_feature_df()
-			# query = pd.read_pickle("../query.pkl")
-			# model = pd.read_pickle("model.pkl")
-
-
-			# df = pd.read_gbq(prepared_query, project_id=self.project, dialect="standard", verbose=False).fillna(value=0)
 			df = df.set_index("player")
 			prediction_input = df.select_dtypes([np.number]).drop(['dk'], axis=1).dropna()
 
@@ -50,11 +45,13 @@ class DraftKingsNBAOptimizeLineups:
 
 	def optimize(self):
 		projection_df = self.get_projections
+		print(projection_df.shape)
 		iterations=50
 		data_col_names = ["Id", "Name", "Position", "Team", "Salary", "AvgPointsPerGame"]
 		dk_data = pd.read_csv(self.dk_link)[["ID", "Name", "Position", "TeamAbbrev", "Salary", "AvgPointsPerGame"]]
+		print(dk_data.shape)
 		dk_data.columns = data_col_names
-		# dk_data = dk_data.set_index("Name")
+		dk_data = dk_data.set_index("Name")
 		data = dk_data.join(projection_df["Projected"], how="left").reset_index().drop(["AvgPointsPerGame"], axis=1).fillna(value=0)
 		prob = pulp.LpProblem('NBA', pulp.LpMaximize)
 		players={}
