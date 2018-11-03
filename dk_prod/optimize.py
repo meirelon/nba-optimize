@@ -9,7 +9,7 @@ import random
 from player import *
 
 from prod_utils import load_pipeline
-import build_feature_set
+import FeatureBuilding
 
 class DraftKingsNBAOptimizeLineups:
 	def __init__(self, project, dataset, dk_link, total_lineups, season, partition_date):
@@ -24,7 +24,7 @@ class DraftKingsNBAOptimizeLineups:
 	@property
 	def get_projections(self):
 		if not self._projection_df:
-			build_features = build_feature_set.BuildFeatureSet(project=self.project,
+			build_features = FeatureBuilding.BuildFeatureSet(project=self.project,
 											bucket='draftkings',
 											destination_path='sql_queires/training',
 											filename='get_player_data',
@@ -34,14 +34,16 @@ class DraftKingsNBAOptimizeLineups:
 			df = build_features.get_feature_df()
 			# query = pd.read_pickle("../query.pkl")
 			# model = pd.read_pickle("model.pkl")
-			model = load_pipeline(project_id=self.project,
-									bucket='draftkings',
-									destination_path='nba_models/{partition_date}'.format(partition_date=self.partition_date),
-									filename='model')
+
 
 			# df = pd.read_gbq(prepared_query, project_id=self.project, dialect="standard", verbose=False).fillna(value=0)
 			df = df.set_index("player")
 			prediction_input = df.select_dtypes([np.number]).drop(['dk', 'secs_played'], axis=1).dropna()
+
+			model = load_pipeline(project_id=self.project,
+									bucket='draftkings',
+									destination_path='nba_models/{partition_date}'.format(partition_date=self.partition_date),
+									filename='model')
 			df["Projected"] = model.predict(prediction_input)
 			self._projection_df = df
 			return self._projection_df
@@ -193,6 +195,14 @@ def main(argv=None):
 	                    dest='total_lineups',
 	                    default = 50,
 	                    help='How many lineups should be generated?')
+	parser.add_argument('--season',
+	                    dest='season',
+	                    default = 2019,
+	                    help='which season is this for?')
+	parser.add_argument('--partition_date',
+	                    dest='partition_date',
+	                    default = None,
+	                    help='latest partition date')
 	parser.add_argument('--dk_link',
 	                    dest='dk_link',
 	                    default = None,
