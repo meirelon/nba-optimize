@@ -40,6 +40,8 @@ def get_rolling_game_avgs(df, index_on, games=20):
 
 
 def model_bakeoff(model, df, dependent_var, test_size, random_state=42):
+    #make a copy of the model if the accuracy is low, then train on everything
+    model_deploy = model
     X = df.drop([dependent_var], axis=1)
     y = df[dependent_var]
 
@@ -63,7 +65,7 @@ def model_bakeoff(model, df, dependent_var, test_size, random_state=42):
         X_transformed = complete_pipeline.fit_transform(X)
     except:
         X_transformed = X.select_dtypes([np.number])
-        print(X_transformed.columns)
+        print(len(X_transformed.columns))
 
     X_train, X_test, y_train, y_test = train_test_split(X_transformed, y, test_size=test_size, random_state=random_state)
 
@@ -73,13 +75,19 @@ def model_bakeoff(model, df, dependent_var, test_size, random_state=42):
     training_accuracy = sqrt(mean_squared_error(y_pred=model.predict(X_train), y_true=y_train))
     is_overfit = abs(testing_accuracy - training_accuracy) > 1
 
-    # plt.scatter(y_hat, y_test)
-    # plt.show()
+    if testing_accuracy < 10:
+        model_deploy.fit(X_transformed, y)
+        return {"model":model_deploy,
+                "preprocessing":complete_pipeline,
+                "accuracy":testing_accuracy,
+                "overfit":is_overfit}
+    else:
+        return {"model":model,
+                "preprocessing":complete_pipeline,
+                "accuracy":testing_accuracy,
+                "overfit":is_overfit}
 
-    return {"model":model,
-            "preprocessing":complete_pipeline,
-            "accuracy":testing_accuracy,
-            "overfit":is_overfit}
+
 
 
 
