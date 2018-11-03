@@ -5,14 +5,13 @@ from prod_utils import get_rolling_game_avgs, load_pipeline
 
 
 class BuildFeatureSet:
-    def __init__(self, project, bucket, destination_path, filename, season, partition_date, output_table='training', is_today=False):
+    def __init__(self, project, bucket, destination_path, filename, season, partition_date, is_today=False):
         self.project = project
         self.bucket = bucket
         self.destination_path = destination_path
         self.filename = filename
         self.season = season
         self.partition_date = partition_date
-        self.output_table = output_table
         self.is_today = is_today
         self._df = None
 
@@ -48,7 +47,7 @@ class BuildFeatureSet:
     def to_gbq(self):
         features = self.get_feature_df()
         features.to_gbq(project_id=self.project,
-                        destination_table="{sport_type}.features{season}_{partition_date}".format(sport_type="basketball",
+                        destination_table="{sport_type}.training{season}_{partition_date}".format(sport_type="basketball",
                                                                                                   season=self.season,
                                                                                                 partition_date=self.partition_date),
                                                                                                 if_exists="replace",
@@ -80,9 +79,6 @@ def main(argv=None):
     parser.add_argument('--partition_date',
                         dest='partition_date',
                         default = '20181025')
-    parser.add_argument('--output_table',
-                        dest='output_table',
-                        default = 'training')
     parser.add_argument('--is_today',
                         dest='is_today',
                         default = False)
@@ -95,7 +91,6 @@ def main(argv=None):
                                 filename=args.filename,
                                 season=args.season,
                                 partition_date=args.partition_date,
-                                output_table=args.output_table,
                                 is_today=args.is_today)
 
     pipeline.to_gbq()
