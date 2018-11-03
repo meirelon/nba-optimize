@@ -54,7 +54,7 @@ class DraftKingsNBAOptimizeLineups:
 		data_col_names = ["Id", "Name", "Position", "Team", "Salary", "AvgPointsPerGame"]
 		dk_data = pd.read_csv(self.dk_link)[["ID", "Name", "Position", "TeamAbbrev", "Salary", "AvgPointsPerGame"]]
 		dk_data.columns = data_col_names
-		dk_data = dk_data.set_index("Name")
+		# dk_data = dk_data.set_index("Name")
 		data = dk_data.join(projection_df["Projected"], how="left").reset_index().drop(["AvgPointsPerGame"], axis=1).fillna(value=0)
 		prob = pulp.LpProblem('NBA', pulp.LpMaximize)
 		players={}
