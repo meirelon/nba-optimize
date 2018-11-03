@@ -69,7 +69,7 @@ def main(argv=None):
                         help='bucket to store train')
     parser.add_argument('--destination_path',
                         dest='destination_path',
-                        default = 'sql_queries')
+                        default = 'sql_queries/training')
     parser.add_argument('--filename',
                         dest='filename',
                         default = 'get_player_data')
