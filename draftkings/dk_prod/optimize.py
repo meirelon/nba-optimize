@@ -9,22 +9,37 @@ import random
 from player import *
 
 from prod_utils import load_pipeline
+import build_feature_set
 
 class DraftKingsNBAOptimizeLineups:
-	def __init__(self, project, dataset, dk_link, total_lineups):
+	def __init__(self, project, dataset, dk_link, total_lineups, season, partition_date):
 		self.project = project
 		self.dataset = dataset
 		self.dk_link = dk_link
 		self.total_lineups = total_lineups
+		self.season = season
+		self.partition_date = partition_date
 		self._projection_df = None
 
 	@property
 	def get_projections(self):
 		if not self._projection_df:
-			query = pd.read_pickle("../query.pkl")
-			model = pd.read_pickle("model.pkl")
-			prepared_query = query.format(season=2019, dt='2018-10-27', partition_date='20181028')
-			df = pd.read_gbq(prepared_query, project_id='scarlet-labs', dialect="standard", verbose=False).fillna(value=0)
+			build_features = build_feature_set.BuildFeatureSet(project=self.project,
+											bucket='draftkings',
+											destination_path='sql_queires/training',
+											filename='get_player_data',
+											season=self.season,
+											partition_date=self.partition_date,
+											is_today=True)
+			df = build_features.get_feature_df()
+			# query = pd.read_pickle("../query.pkl")
+			# model = pd.read_pickle("model.pkl")
+			model = load_pipeline(project_id=self.project,
+									bucket='draftkings',
+									destination_path='nba_models/{partition_date}'.format(partition_date=self.partition_date),
+									filename='model')
+
+			# df = pd.read_gbq(prepared_query, project_id=self.project, dialect="standard", verbose=False).fillna(value=0)
 			df = df.set_index("player")
 			prediction_input = df.select_dtypes([np.number]).drop(['dk', 'secs_played'], axis=1).dropna()
 			df["Projected"] = model.predict(prediction_input)

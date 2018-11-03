@@ -2,7 +2,7 @@ import argparse
 from datetime import datetime
 import numpy as np
 import pandas as pd
-from playerinfo_util import get_player_info, get_player_game_logs
+from playerinfo_utils import get_player_info, get_player_game_logs
 
 class bbrefToGBQ:
     def __init__(self, project_id, dataset_id, year):

@@ -5,7 +5,7 @@ from training_utils import get_rolling_game_avgs, load_pipeline
 
 
 class BuildFeatureSet:
-    def __init__(self, project, bucket, destination_path, filename, season, partition_date, output_table, is_today=False):
+    def __init__(self, project, bucket, destination_path, filename, season, partition_date, output_table='training', is_today=False):
         self.project = project
         self.bucket = bucket
         self.destination_path = destination_path
@@ -45,10 +45,11 @@ class BuildFeatureSet:
         else:
             return feature_df
 
-    def run(self):
+    def to_gbq(self):
         features = self.get_feature_df()
         features.to_gbq(project_id=self.project,
-                        destination_table="{sport_type}.features_{partition_date}".format(sport_type="basketball",
+                        destination_table="{sport_type}.features{season}_{partition_date}".format(sport_type="basketball",
+                                                                                                  season=self.season,
                                                                                                 partition_date=self.partition_date),
                                                                                                 if_exists="replace",
                                                                                                 verbose=False,
@@ -97,7 +98,7 @@ def main(argv=None):
                                 output_table=args.output_table,
                                 is_today=args.is_today)
 
-    pipeline.run()
+    pipeline.to_gbq()
 
 if __name__ == '__main__':
     main()

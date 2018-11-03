@@ -17,16 +17,18 @@ from math import sqrt
 from training_utils import model_bakeoff, deploy_pickle
 
 class TrainModel:
-    def __init__(self, project, bucket, destination_path, partition_date):
+    def __init__(self, project, bucket, destination_path, season, partition_date):
         self.project = project
         self.bucket = bucket
         self.destination_path = destination_path
+        self.season = season
         self.partition_date = partition_date
 
 
     def train(self):
         project = self.project
-        query = 'select * from `scarlet-labs.basketball.features_{partition_date}`'.format(partition_date=self.partition_date)
+        query = 'select * from `scarlet-labs.basketball.features{season}_{partition_date}`'.format(season= self.season,
+                                                                                                   partition_date=self.partition_date)
         df = pd.read_gbq(query=query, project_id=project, dialect="standard", verbose=False)
         training = df.drop(["bbrefID", "player", "date"], axis=1).dropna()
 
@@ -88,6 +90,10 @@ def main(argv=None):
                         dest='destination_path',
                         default = 'nba_models',
                         help='This is the sport type (for now)')
+    parser.add_argument('--season',
+                        dest='season',
+                        default = '2019',
+                        help='This is the sport type (for now)')
     parser.add_argument('--partition_date',
                         dest='partition_date',
                         default = '20181025',
@@ -98,8 +104,8 @@ def main(argv=None):
     train_pipeline = TrainModel(project=args.project,
                                 bucket=args.bucket,
                                 destination_path=args.destination_path,
-                                partition_date=args.partition_date
-                                )
+                                season=args.season,
+                                partition_date=args.partition_date)
 
     train_pipeline.run()
 
