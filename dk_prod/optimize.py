@@ -38,9 +38,8 @@ class DraftKingsNBAOptimizeLineups:
 
 			# df = pd.read_gbq(prepared_query, project_id=self.project, dialect="standard", verbose=False).fillna(value=0)
 			df = df.set_index("player")
-			print(df.columns)
 			prediction_input = df.select_dtypes([np.number]).drop(['dk'], axis=1).dropna()
-
+			print(prediction_input)
 			model = load_pipeline(project_id=self.project,
 									bucket='draftkings',
 									destination_path='nba_models/{partition_date}'.format(partition_date=self.partition_date),
