@@ -212,6 +212,8 @@ def main(argv=None):
 
 	optimize_pipeline = DraftKingsNBAOptimizeLineups(project=args.project,
 													dataset=args.dataset_id,
+													season=args.season,
+													partition_date=args.partition_date,
 													dk_link=args.dk_link,
 													total_lineups=args.total_lineups)
 	optimize_pipeline.optimize()
