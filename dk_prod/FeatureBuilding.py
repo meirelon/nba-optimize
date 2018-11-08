@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime
 import pandas as pd
 import numpy as np
 from prod_utils import get_rolling_game_avgs, load_pipeline
@@ -11,10 +12,18 @@ class BuildFeatureSet:
         self.destination_path = destination_path
         self.filename = filename
         self.season = season
-        self.partition_date = partition_date
         self.is_today = is_today
+        self.partition_date = partition_date
         self._df = None
 
+
+    @property
+    def get_partition_date(self):
+        if not self.partition_date:
+            self.partition_date = datetime.today().strftime("%Y%m%d")
+        else:
+            self.partition_date = self.partition_date
+        return self.partition_date
 
     @property
     def get_df(self):
@@ -23,7 +32,7 @@ class BuildFeatureSet:
                                   bucket=self.bucket,
                                   destination_path=self.destination_path,
                                   filename=self.filename)
-            prepared_query = query.format(season=self.season, partition_date=self.partition_date)
+            prepared_query = query.format(season=self.season, partition_date=self.get_partition_date)
             self._df = pd.read_gbq(query=prepared_query, project_id=self.project, dialect="standard", verbose=False)
             return self._df
 
@@ -49,7 +58,7 @@ class BuildFeatureSet:
         features.to_gbq(project_id=self.project,
                         destination_table="{sport_type}.training{season}_{partition_date}".format(sport_type="basketball",
                                                                                                   season=self.season,
-                                                                                                partition_date=self.partition_date),
+                                                                                                partition_date=self.get_partition_date),
                                                                                                 if_exists="replace",
                                                                                                 verbose=False,
                                                                                                 chunksize=1000)
@@ -78,7 +87,7 @@ def main(argv=None):
                         default = '2019')
     parser.add_argument('--partition_date',
                         dest='partition_date',
-                        default = '20181025')
+                        default = None)
     parser.add_argument('--is_today',
                         dest='is_today',
                         default = False)
