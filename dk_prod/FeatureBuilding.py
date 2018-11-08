@@ -32,7 +32,7 @@ class BuildFeatureSet:
                                   bucket=self.bucket,
                                   destination_path=self.destination_path,
                                   filename=self.filename)
-            prepared_query = query.format(season=self.season, partition_date='20181025')
+            prepared_query = query.format(season=self.season, partition_date='20181108')
             self._df = pd.read_gbq(query=prepared_query, project_id=self.project, dialect="standard", verbose=False)
             return self._df
 
