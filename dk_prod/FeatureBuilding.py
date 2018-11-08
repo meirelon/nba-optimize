@@ -21,9 +21,9 @@ class BuildFeatureSet:
     def get_partition_date(self):
         if not self.partition_date:
             self.partition_date = datetime.today().strftime("%Y%m%d")
+            return self.partition_date
         else:
-            self.partition_date = self.partition_date
-        return self.partition_date
+            return self.partition_date
 
     @property
     def get_df(self):
@@ -32,7 +32,7 @@ class BuildFeatureSet:
                                   bucket=self.bucket,
                                   destination_path=self.destination_path,
                                   filename=self.filename)
-            prepared_query = query.format(season=self.season, partition_date=self.get_partition_date)
+            prepared_query = query.format(season=self.season, partition_date=datetime.today().strftime("%Y%m%d"))
             self._df = pd.read_gbq(query=prepared_query, project_id=self.project, dialect="standard", verbose=False)
             return self._df
 
