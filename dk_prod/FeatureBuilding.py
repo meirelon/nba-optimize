@@ -32,8 +32,8 @@ class BuildFeatureSet:
                                   bucket=self.bucket,
                                   destination_path=self.destination_path,
                                   filename=self.filename)
-            prepared_query = query.format(season=self.season, partition_date=datetime.today().strftime("%Y%m%d"))
-            self._df = pd.read_gbq(query=prepared_query, project_id=self.project, dialect="standard", verbose=False)
+            prepared_query = query.format(season=self.season, partition_date=self.get_partition_date)
+            self._df = pd.read_gbq(query="select * from `scarlet-labs.basketball.standard2019_20181108`", project_id=self.project, dialect="standard", verbose=False)
             return self._df
 
     def get_feature_df(self):
