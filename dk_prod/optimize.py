@@ -22,6 +22,14 @@ class DraftKingsNBAOptimizeLineups:
 		self._projection_df = None
 
 	@property
+    def get_partition_date(self):
+    	if not self.partition_date:
+            self.partition_date = datetime.today().strftime("%Y%m%d")
+            return self.partition_date
+    	else:
+			return self.partition_date
+
+	@property
 	def get_projections(self):
 		if not self._projection_df:
 			build_features = FeatureBuilding.BuildFeatureSet(project=self.project,
@@ -29,7 +37,7 @@ class DraftKingsNBAOptimizeLineups:
 											destination_path='sql_queries/training',
 											filename='get_player_data',
 											season=self.season,
-											partition_date=self.partition_date,
+											partition_date=self.get_partition_date,
 											is_today=True)
 			df = build_features.get_feature_df()
 			df = df.set_index("player")
@@ -37,7 +45,7 @@ class DraftKingsNBAOptimizeLineups:
 
 			model = load_pipeline(project_id=self.project,
 									bucket='draftkings',
-									destination_path='nba_models/{partition_date}'.format(partition_date=self.partition_date),
+									destination_path='nba_models/{partition_date}'.format(partition_date=self.get_partition_date),
 									filename='model')
 			df["Projected"] = model.predict(prediction_input)
 			self._projection_df = df
@@ -182,7 +190,7 @@ def main(argv=None):
 
 	parser.add_argument('--project',
 	                    dest='project',
-	                    default = 'scarlet-labs',
+	                    default = None,
 	                    help='This is the GCP project you wish to send the data')
 	parser.add_argument('--dataset_id',
 	                    dest='dataset_id',
