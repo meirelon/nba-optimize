@@ -23,7 +23,7 @@ class DraftKingsNBAOptimizeLineups:
 
 
 	@property
-    def get_partition_date(self):
+	def get_partition_date(self):
 		if not self.partition_date:
 			self.partition_date = datetime.today().strftime("%Y%m%d")
 			return self.partition_date
