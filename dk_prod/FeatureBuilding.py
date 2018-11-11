@@ -61,7 +61,7 @@ class BuildFeatureSet:
                                                                                                 partition_date=self.get_partition_date),
                                                                                                 if_exists="replace",
                                                                                                 verbose=False,
-                                                                                                chunksize=1000)
+                                                                                                chunksize=200)
 
 
 
@@ -70,7 +70,7 @@ def main(argv=None):
 
     parser.add_argument('--project',
                         dest='project',
-                        default = 'scarlet-labs',
+                        default = None,
                         help='This is the GCP project you wish to send the data')
     parser.add_argument('--bucket',
                         dest='bucket',
