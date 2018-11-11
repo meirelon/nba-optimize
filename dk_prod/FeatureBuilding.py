@@ -1,5 +1,5 @@
 import argparse
-from datetime import datetime, timedelta
+from datetime import datetime
 import pandas as pd
 import numpy as np
 from prod_utils import get_rolling_game_avgs, load_pipeline
@@ -20,8 +20,7 @@ class BuildFeatureSet:
     @property
     def get_partition_date(self):
         if not self.partition_date:
-            tmp_ = datetime.today()- timedelta(days=1)
-            self.partition_date = tmp_.strftime("%Y%m%d")
+            self.partition_date = datetime.today().strftime("%Y%m%d")
             return self.partition_date
         else:
             return self.partition_date
