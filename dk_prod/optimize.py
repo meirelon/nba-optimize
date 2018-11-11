@@ -21,6 +21,7 @@ class DraftKingsNBAOptimizeLineups:
 		self.partition_date = partition_date
 		self._projection_df = None
 
+
 	@property
     def get_partition_date(self):
 		if not self.partition_date:
