@@ -24,11 +24,19 @@ class TrainModel:
         self.season = season
         self.partition_date = partition_date
 
+    @property
+    def get_partition_date(self):
+        if not self.partition_date:
+            self.partition_date = datetime.today().strftime("%Y%m%d")
+            return self.partition_date
+        else:
+            return self.partition_date
 
     def train(self):
         project = self.project
-        query = 'select * from `scarlet-labs.basketball.training{season}_{partition_date}`'.format(season= self.season,
-                                                                                                   partition_date=self.partition_date)
+        query = 'select * from `{project}.basketball.training{season}_{partition_date}`'.format(project=self.project,
+                                                                                                season= self.season,
+                                                                                                partition_date=self.get_partition_date)
         df = pd.read_gbq(query=query, project_id=project, dialect="standard", verbose=False)
         training = df.drop(["bbrefID", "player", "date"], axis=1).dropna()
 
@@ -80,7 +88,7 @@ def main(argv=None):
 
     parser.add_argument('--project',
                         dest='project',
-                        default = 'scarlet-labs',
+                        default = None,
                         help='This is the GCP project you wish to send the data')
     parser.add_argument('--bucket',
                         dest='bucket',
@@ -96,7 +104,7 @@ def main(argv=None):
                         help='This is the sport type (for now)')
     parser.add_argument('--partition_date',
                         dest='partition_date',
-                        default = '20181025',
+                        default = None,
                         help='partition date of data collection')
 
     args, _ = parser.parse_known_args(argv)
