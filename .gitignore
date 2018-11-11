@@ -8,3 +8,4 @@
 *.pkl
 *.qry
 *.gdoc
+*.cron
