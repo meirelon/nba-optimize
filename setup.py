@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ScarletNBA",
-    version="0.0.1",
+    version="0.0.2",
     author="Michael Nestel",
     author_email="nestelm@gmail.com",
     description="A small NBA prediction package",
