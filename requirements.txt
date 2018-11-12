@@ -12,4 +12,3 @@ gunicorn==19.7.1
 six==1.10
 Flask==0.12.3
 pulp
-python-telegram-bot==11.1.0
