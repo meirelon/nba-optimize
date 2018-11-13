@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import logging
 from flask import Flask, request
-from dk_prod import optimize
+from dk_prod import optimize, player, FeatureBuilding, prod_utils
 
 app = Flask(__name__)
 
@@ -12,6 +12,9 @@ def test():
     input = request.get_json()
     # this is the draftkings link (str)
     dk_url = input.get('dk_url')
+    if dk_url is None:
+        return "No url found", 400
+
     total_lineups = input.get('total_lineups', 50)
     optimize_pipeline = optimize.DraftKingsNBAOptimizeLineups(project='scarlet-labs',
 													dataset='draftkings',
