@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import logging
 from flask import Flask, request
-import dk_prod
+from dk_prod import optimize
 
 app = Flask(__name__)
 
@@ -13,13 +13,14 @@ def test():
     # this is the draftkings link (str)
     dk_url = input.get('dk_url')
     total_lineups = input.get('total_lineups', 50)
-    optimize_pipeline = DraftKingsNBAOptimizeLineups(project='scarlet-labs',
+    optimize_pipeline = optimize.DraftKingsNBAOptimizeLineups(project='scarlet-labs',
 													dataset='draftkings',
 													season='2019',
 													partition_date=None,
 													dk_link=dk_url,
 													total_lineups=int(total_lineups))
-    optimize_pipeline.optimize()
+    return optimize_pipeline.optimize()
+
 
 
 def start_get_data(): #make up memorable function name for cron job
