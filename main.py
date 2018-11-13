@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import logging
 from flask import Flask, request
+import dk_prod
 
 app = Flask(__name__)
 
@@ -8,9 +9,9 @@ app = Flask(__name__)
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
-    tmp = request.get_json()
-    print(tmp)
-    return 'success'
+    input = request.get_json()
+    input_value = input.get('key1')
+    return len(input_value)
 
 def start_get_data(): #make up memorable function name for cron job
     is_cron = request.headers.get('X-Appengine-Cron', False)
