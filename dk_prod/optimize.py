@@ -149,7 +149,7 @@ class DraftKingsNBAOptimizeLineups:
 
 			lineups.append(lineup)
 		filename="Prediction.csv"
-		self.write_output(filename,lineups,prob)
+		return self.write_output(filename,lineups,prob)
 
 	def write_output(self, filename, lineups, prob):
 		#Writes lineups to csv
