@@ -10,8 +10,17 @@ app = Flask(__name__)
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     input = request.get_json()
-    input_value = input.get('key1')
-    return len(input_value)
+    # this is the draftkings link (str)
+    dk_url = input.get('dk_url')
+    total_lineups = input.get('total_lineups', 50)
+    optimize_pipeline = DraftKingsNBAOptimizeLineups(project='scarlet-labs',
+													dataset='draftkings',
+													season='2019',
+													partition_date=None,
+													dk_link=dk_url,
+													total_lineups=int(total_lineups))
+    optimize_pipeline.optimize()
+
 
 def start_get_data(): #make up memorable function name for cron job
     is_cron = request.headers.get('X-Appengine-Cron', False)

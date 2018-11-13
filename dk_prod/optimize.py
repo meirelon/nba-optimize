@@ -183,8 +183,10 @@ class DraftKingsNBAOptimizeLineups:
 
 		df=pd.read_csv(filename)
 		df.to_gbq(project_id=self.project,
-		destination_table="{dataset}.projections_{dt}".format(dataset=self.dataset, dt=datetime.today().strftime("%Y%m%d")),
-		if_exists="replace")
+					destination_table="{dataset}.projections_{dt}".format(dataset=self.dataset, dt=datetime.today().strftime("%Y%m%d")),
+					if_exists="replace")
+
+		return df.to_string(header=True, index=False, index_names=False).split('\n')
 
 def main(argv=None):
 	parser = argparse.ArgumentParser()
