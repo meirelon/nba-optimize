@@ -6,10 +6,10 @@ import pandas as pd
 import re
 import csv
 import random
-from player import *
+from dk_prod.player import *
 
-from prod_utils import load_pipeline
-import FeatureBuilding
+from dk_prod.prod_utils import load_pipeline
+import dk_prod.FeatureBuilding as FeatureBuilding
 
 class DraftKingsNBAOptimizeLineups:
 	def __init__(self, project, dataset, dk_link, total_lineups, season, partition_date):
