@@ -5,9 +5,7 @@ from dk_prod import optimize, player, FeatureBuilding, prod_utils
 
 app = Flask(__name__)
 
-# @app.route('/nbadk/optimize')
-
-@app.route('/test', methods=['GET', 'POST'])
+@app.route('/optimize', methods=['GET', 'POST'])
 def test():
     input = request.get_json()
     # this is the draftkings link (str)
