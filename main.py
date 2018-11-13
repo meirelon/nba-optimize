@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 import logging
 from flask import Flask, request
-from scrape_foos import scrape
 
 app = Flask(__name__)
 
