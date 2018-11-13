@@ -2,7 +2,7 @@ import argparse
 from datetime import datetime
 import pandas as pd
 import numpy as np
-from prod_utils import get_rolling_game_avgs, load_pipeline
+from dk_prod.prod_utils import get_rolling_game_avgs, load_pipeline
 
 
 class BuildFeatureSet:
