@@ -40,4 +40,4 @@ def bq_to_gcs(project_id, dataset_id, table_id, bucket, filename):
 
     extract_job =client.extract_table(table_ref, destination_uri,location='US')
     extract_job.result()
-    return 'Exported {}:{}.{} to {}'.format(project, dataset_id, table_id, destination_uri)
+    return 'Exported {}:{}.{} to {}'.format(project_id, dataset_id, table_id, destination_uri)
