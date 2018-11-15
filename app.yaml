@@ -1,5 +1,5 @@
 runtime: python
-env: flex
+env: standard
 entrypoint: gunicorn -t 1200 -b :$PORT main:app
 
 runtime_config:
