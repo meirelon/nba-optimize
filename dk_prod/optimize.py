@@ -193,7 +193,7 @@ class DraftKingsNBAOptimizeLineups:
 					dataset_id=self.dataset,
 					table_id='projections_{dt}'.format(dt=datetime.today().strftime("%Y%m%d")),
 					bucket='draftkings_lineups',
-					filename='projections_{dt}'.format(dt=datetime.today().strftime("%Y%m%d")))
+					filename='projections_{dt}.csv'.format(dt=datetime.today().strftime("%Y%m%d")))
 
 		return df.to_string(header=True, index=False, index_names=False)
 
