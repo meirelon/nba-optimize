@@ -3,7 +3,8 @@ pandas-gbq==0.4.0
 oauth2client
 datalab==1.1.4
 google-api-python-client
-pandas==0.19.2
+#pandas==0.19.2
+pandas
 scipy
 gcloud
 requests
