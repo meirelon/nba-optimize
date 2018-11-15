@@ -182,15 +182,18 @@ class DraftKingsNBAOptimizeLineups:
 		target.close()
 
 		df=pd.read_csv(filename)
+
+		#push lineup data to bq for further analysis
 		df.to_gbq(project_id=self.project,
 					destination_table="{dataset}.projections_{dt}".format(dataset=self.dataset, dt=datetime.today().strftime("%Y%m%d")),
 					if_exists="replace")
 
+		#migrate lineup data to gcs to publish
 		bq_to_gcs(project_id=self.project,
 					dataset_id=self.dataset,
 					table_id='projections_{dt}'.format(dt=datetime.today().strftime("%Y%m%d")),
 					bucket='draftkings_lineups',
-					filename='projections_{dt}'.format(dt=datetime.today().strftime("%Y%m%d"))
+					filename='projections_{dt}'.format(dt=datetime.today().strftime("%Y%m%d")))
 
 		return df.to_string(header=True, index=False, index_names=False)
 
