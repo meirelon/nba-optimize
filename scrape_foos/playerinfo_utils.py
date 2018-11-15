@@ -100,3 +100,24 @@ def get_player_game_logs(bbrefID, game_log_type, year):
         return df
     except:
         return None
+
+
+
+def get_player_injuries():
+    url = 'https://www.basketball-reference.com/friv/injuries.fcgi'
+    r = get_request(url)
+    all_tags = bs(r.content, "html.parser")
+
+    tbl = all_tags.find("table", attrs={"class" : "sortable stats_table"})
+    tbl_rows = tbl.find_all('tr')
+    df_columns = ["player", "team", "update", "description"]
+
+    line = []
+    for tr in tbl_rows:
+        td = tr.find_all(['td', 'th'])
+        row = [tr.text for tr in td]
+        line.append(row)
+    df = pd.DataFrame(line).iloc[1:,0:4]
+    df.columns = df_columns
+    df["is_out"] = [bool(re.search(string=x, pattern="Out")) for x in df['description']]
+    return df
