@@ -3,6 +3,7 @@ import os
 import pickle
 from datetime import datetime
 from gcloud import storage
+from google.cloud import bigquery
 from tempfile import NamedTemporaryFile
 
 import pandas as pd
@@ -30,3 +31,13 @@ def get_rolling_game_avgs(df, index_on, games=20):
                                                             rolling=games) for c in df_transformed.columns]
     df_transformed.columns = new_col_names
     return df_transformed
+
+def bq_to_gcs(project_id, dataset_id, table_id, bucket, filename):
+    client = bigquery.Client(project=project_id)
+    destination_uri = "gs://{bucket}/{filename}".format(bucket=bucket, filename=filename)
+    dataset_ref = client.dataset(dataset_id, project=project_id)
+    table_ref = dataset_ref.table(table_id)
+
+    extract_job =client.extract_table(table_ref, destination_uri,location='US')
+    extract_job.result()
+    return 'Exported {}:{}.{} to {}'.format(project, dataset_id, table_id, destination_uri)
