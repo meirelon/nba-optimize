@@ -1,7 +1,7 @@
 **_PLEASE put all exploratory work in the notebooks directory_**
 
 ## NBA Player Prediction and Optimization
-Pipeline for NBA Optimization (NHL TBD)
+Pipeline for NBA Optimization
 
 ## Dry Run
 ```
