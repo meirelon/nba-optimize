@@ -8,7 +8,7 @@ import csv
 import random
 from dk_prod.player import *
 
-from dk_prod.prod_utils import load_pipeline
+from dk_prod.prod_utils import load_pipeline, bq_to_gcs
 import dk_prod.FeatureBuilding as FeatureBuilding
 
 class DraftKingsNBAOptimizeLineups:
@@ -185,6 +185,12 @@ class DraftKingsNBAOptimizeLineups:
 		df.to_gbq(project_id=self.project,
 					destination_table="{dataset}.projections_{dt}".format(dataset=self.dataset, dt=datetime.today().strftime("%Y%m%d")),
 					if_exists="replace")
+
+		bq_to_gcs(project_id=self.project,
+					dataset_id=self.dataset,
+					table_id='projections_{dt}'.format(dt=datetime.today().strftime("%Y%m%d")),
+					bucket='draftkings_lineups',
+					filename='projections_{dt}'.format(dt=datetime.today().strftime("%Y%m%d"))
 
 		return df.to_string(header=True, index=False, index_names=False)
 
