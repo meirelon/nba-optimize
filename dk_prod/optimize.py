@@ -98,16 +98,16 @@ class DraftKingsNBAOptimizeLineups:
 		prob += (total_cost <= total_budget)
 		prob += (num_players ==8)
 
-		prob += (pgs <=3)
+		prob += (pgs <=2)
 		prob += (pgs >=1)
 
-		prob += (sgs <=3)
+		prob += (sgs <=2)
 		prob += (sgs >=1)
 
-		prob += (sfs <=3)
+		prob += (sfs <=2)
 		prob += (sfs >=1)
 
-		prob += (pfs <=3)
+		prob += (pfs <=2)
 		prob += (pfs >=1)
 
 		prob += (cs <=2)
